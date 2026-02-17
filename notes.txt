@@ -1,0 +1,37 @@
+1- A lot of people in examples tend to use unsigned int for the size constants, but std::size_t is good bc this is what sizes get cast to anyway
+
+2 - Const is an instance member, it gets copied to every instance (i.e a class instance). This is wasteful when all instances will use the same values
+static constexpr is better, compile time constant that don't take up object memory and are usable in array sizes. 
+
+
+
+Notable debugging/mistakes
+
+For ANNN and BNNN, I had initally used uint8_t to store the masked opcode against 0x0FFFu.
+I needed uint16_t since 3 nibbles , so I was truncating the opcode and making the memory address significantly smaller, which was causing the fonts to print instead
+of the first test splash. I fixed by correcting my variable initialization to uin16_t
+
+Math functions failing for operations on existing carry/borrow flags: In my initial implementation of the math operations, 
+I incorrectly set the carry/borrow register (0xF) pre-operation. This is fine in most cases ,but it creates bugs when an operation 
+it neglects the case where an existing carry/borrow value is used in an operation. 
+
+To fix this , I added variables to store info about the carry register state pre-operation , performed the operation so the existing state 
+can be used in cases it is needed, then use the pre-op state to set the appropriate new carry . After making this change all the failing instructions passed
+
+op_fxoa failing "not released" , 
+
+I wasn't handling a key press and release orginally , only a held state (detect when a key is down on cycle, don't await release),
+to fix I added edge event arrays to my architecture (just_pressed, just_released) and updated the SDL event loop to populate them and used these for FXOA and the cycle loop to handle
+the waiting for input events with a press and release . 
+
+implementing audio was HARD. I ended up using ChatGPT codex for planning and getting some hints ,but eventually was able to get it going by
+extending my SDL graphics with a few more components and adding a function to my vm to return true when the sound clock was active
+
+The quirks still seem to fail , mainly because I am using a sort of hybrid setup between the original chip8 
+and the later , more modern chip-48 specs. This seems fine though , every game I run seems to operate fine
+and I've yet to run into any issues, Also when I tried to change to some of the older chip8 behaviors i encountered
+issues with some of the ROMs, so I chose to leave for now! 
+
+
+http://devernay.free.fr/hacks/chip8/C8TECH10.HTM
+https://austinmorlan.com/posts/chip8_emulator/
