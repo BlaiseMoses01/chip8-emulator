@@ -15,6 +15,9 @@ A CHIP-8 emulator written in C++ with SDL2 rendering/input/audio and an in-app d
 
 ## Demo 
 
+click to see YT demo! 
+
+[![demoimg](./imgs/demo.png)](https://www.youtube.com/watch?v=OGjCWMkxJRA&t=6s)
 
 ## Dependencies
 - C++20 compiler
